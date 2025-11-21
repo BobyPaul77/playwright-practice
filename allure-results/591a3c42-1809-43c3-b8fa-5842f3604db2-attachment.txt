@@ -1,0 +1,2 @@
+Swag Labs
+locator('//span[@class="shopping_cart_badge"]')
