@@ -1,5 +1,6 @@
 const dataset = JSON.parse(JSON.stringify(require('../utils/testdata.json')))
 const test = require('@playwright/test');
+const customtest = require('../utils/test-base')
 // test module is imported from playwright package
 /*test('login verification',({browser}) =>
 {
@@ -30,7 +31,7 @@ await test.expect(identifyfield).toContainText("Swag Labs")
 });
 
 // Invaliduser and valid username, then after error mesg update with valid username
-test.only('Invaliduser',async({browser}) =>
+test ('Invaliduser',async({browser}) =>
 {
 const context = await browser.newContext();
 const page = await context.newPage();
@@ -59,4 +60,32 @@ await test.expect(cardtitles).toHaveCount(6);
 
 //const identifyfield=await page.locator(".app_logo")
 //await test.expect(identifyfield).toContainText("Swag Labs")
+});
+
+customtest.only('Parameterized data driven',async({page,testDataForOrder})=>{
+    //const username=data[0].username
+    //const password=data[0].password
+    await page.goto('https://demoblaze.com/')
+    const loginPage=new LoginPage(page)
+    await loginPage.clickLogin()
+    await loginPage.enterUsername(testDataForOrder.username)
+    await loginPage.enterPassword(testDataForOrder.password)
+    await loginPage.login()
+
+    const addToCartPage = new AddtoCartPage(page) 
+    addToCartPage.selectMonitor()
+    addToCartPage.select_product()
+    await page.pause()
+    await addToCartPage.addToCartBtn()
+    page.on('dialog', dialog => dialog.accept());
+    await addToCartPage.selectCart()
+    await page.pause()
+    await addToCartPage.placeOrderClick()
+    await addToCartPage.addcustomername()
+    await addToCartPage.addcountry()
+    await addToCartPage.addcity()
+    await addToCartPage.addCreditCardData()
+    await addToCartPage.addMonth()
+    await addToCartPage.addYear()
+    await addToCartPage.purchaseProduct()
 });
